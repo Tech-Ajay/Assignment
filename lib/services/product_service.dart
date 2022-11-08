@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hasura_connect/hasura_connect.dart';
 import 'package:supertails/model/product_model.dart';
 import 'package:supertails/utils/constants.dart';
@@ -86,5 +88,41 @@ query MyQuery {
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<bool> createProduct(ProductModel productModel) async {
+    var tag = jsonEncode(productModel.Tags);
+
+    String query = """
+mutation MyMutation {
+  insert_product(objects: {Brand: "${productModel.Brand}", Description: "${productModel.Description}", Variants: "${productModel.Variants}", Tags: ${tag}, SalePrice: ${productModel.SalePrice}, SKUid: "${productModel.SKUid}", Name: "${productModel.Name}", MRP: ${productModel.MRP}, InventoryQuantity: ${productModel.InventoryQuantity}}) {
+    affected_rows
+  }
+}
+
+      """;
+    try {
+      Map<String, dynamic> responseMap;
+      try {
+        responseMap = Map.castFrom(await hasura.mutation(query));
+        print('$responseMap');
+      } catch (error) {
+        print('saveProductDetails: error $error');
+        throw error;
+      }
+      Map<String, Map> dataMap;
+      if (!responseMap.containsKey('data')) {
+        return false;
+      }
+      dataMap = Map.castFrom(responseMap['data']);
+      if (dataMap.entries.first.value.values.first == 1) {
+        print("saveProductDetails: Success");
+        return true;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+    return false;
   }
 }

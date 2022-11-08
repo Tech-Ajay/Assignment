@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 class ProductModel {
   final String? SKUid;
   final String? Name;
   final String? Description;
   final String? Brand;
   final String? Variants;
+  final List<String>? Tags;
   final DateTime? CreatedAt;
   final String? CreatedBy;
   final num? MRP;
@@ -16,6 +19,7 @@ class ProductModel {
     required this.Name,
     required this.Description,
     required this.Brand,
+    required this.Tags,
     required this.Variants,
     required this.CreatedAt,
     required this.MRP,
@@ -31,6 +35,11 @@ class ProductModel {
       Description: map.containsKey('Description') ? map['Description'] : null,
       Brand: map.containsKey('Brand') ? map['Brand'] : null,
       Variants: map.containsKey('Variants') ? map['Variants'] : null,
+      Tags: map.containsKey('Tags') &&
+              map['Tags'] != null &&
+              map['Tags'].toString().trim() != 'null'
+          ? List<String>.from(json.decode(map['Tags']))
+          : null,
       InventoryQuantity: map.containsKey('InventoryQuantity')
           ? map['InventoryQuantity']
           : null,
@@ -49,6 +58,7 @@ class ProductModel {
     String? Description,
     String? Brand,
     String? Variants,
+    List<String>? Tags,
     DateTime? CreatedAt,
     num? MRP,
     num? SalePrice,
@@ -61,6 +71,7 @@ class ProductModel {
       Description: Description ?? this.Description,
       Brand: Brand ?? this.Brand,
       Variants: Variants ?? this.Variants,
+      Tags: Tags ?? this.Tags,
       CreatedAt: CreatedAt ?? this.CreatedAt,
       MRP: MRP ?? this.MRP,
       SalePrice: SalePrice ?? this.SalePrice,
@@ -88,6 +99,9 @@ class ProductModel {
     }
     if (Variants != null && Variants!.isNotEmpty) {
       map['Variants'] = Variants;
+    }
+    if (Tags != null && Tags!.isNotEmpty) {
+      map['Tags'] = Tags;
     }
 
     if (CreatedAt != null) {
