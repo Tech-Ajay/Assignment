@@ -40,157 +40,160 @@ class _AddProductState extends State<AddProduct> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: Center(child: CircularProgressIndicator()))
-            : Column(
-                children: [
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.nameController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Name',
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.nameController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Name',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.descriptionController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Description',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.MRPController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'MRP',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.SalePriceController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'SalePrice',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: DropdownSearch<String>.multiSelection(
+                        items: tags,
+                        popupProps: PopupPropsMultiSelection.menu(
+                          showSelectedItems: true,
+                          disabledItemFn: (String s) => s.startsWith('I'),
                         ),
-                        onChanged: (text) {},
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.descriptionController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Description',
+                        dropdownDecoratorProps: DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                              hintText: "Select Tags",
+                              border: OutlineInputBorder()),
                         ),
-                        onChanged: (text) {},
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.MRPController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'MRP',
-                        ),
-                        onChanged: (text) {},
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.SalePriceController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'SalePrice',
-                        ),
-                        onChanged: (text) {},
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: DropdownSearch<String>.multiSelection(
-                      items: tags,
-                      popupProps: PopupPropsMultiSelection.menu(
-                        showSelectedItems: true,
-                        disabledItemFn: (String s) => s.startsWith('I'),
+                        onChanged: (value) {
+                          controller.SelectedTagList.clear();
+                          controller.SelectedTagList.addAll(value);
+                        },
+                        selectedItems: controller.SelectedTagList,
                       ),
-                      dropdownDecoratorProps: DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                            hintText: "Select Tags",
-                            border: OutlineInputBorder()),
-                      ),
-                      onChanged: (value) {
-                        controller.SelectedTagList.clear();
-                        controller.SelectedTagList.addAll(value);
-                      },
-                      selectedItems: controller.SelectedTagList,
                     ),
-                  ),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.BrandController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Brand',
-                        ),
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.VariantController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Variant',
-                        ),
-                        onChanged: (text) {},
-                      )),
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      child: TextField(
-                        controller: controller.InventoryQuantityController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ], // Only numbers can be entered
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'InventoryQuantity',
-                        ),
-                        onChanged: (text) {},
-                      )),
-                  ElevatedButton(
-                      onPressed: () async {
-                        controller.isLoading.value = true;
-                        if (!controller.validate())
-                          Get.defaultDialog(
-                              title: "Alert",
-                              content: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("Fill All The Field"),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                      child: Text("Close"))
-                                ],
-                              ));
-                        if (controller.validate()) {
-                          bool added = await controller.AddProducts();
-                          controller.isLoading.value = false;
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.BrandController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Brand',
+                          ),
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.VariantController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Variant',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
+                          controller: controller.InventoryQuantityController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ], // Only numbers can be entered
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'InventoryQuantity',
+                          ),
+                          onChanged: (text) {},
+                        )),
+                    ElevatedButton(
+                        onPressed: () async {
+                          controller.isLoading.value = true;
+                          if (!controller.validate())
+                            Get.defaultDialog(
+                                title: "Alert",
+                                content: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("Fill All The Field"),
+                                    ),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Get.back();
+                                        },
+                                        child: Text("Close"))
+                                  ],
+                                ));
+                          if (controller.validate()) {
+                            bool added = await controller.AddProducts();
+                            controller.isLoading.value = false;
 
-                          added
-                              ? {
-                                  controller.ExcludeIdList.clear(),
-                                  controller.refreshProducts(),
-                                  Get.back()
-                                }
-                              : Get.defaultDialog(
-                                  title: "Error",
-                                  content: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Error Adding the Product"),
-                                      ),
-                                      ElevatedButton(
-                                          onPressed: () {
-                                            Get.back();
-                                          },
-                                          child: Text("Close"))
-                                    ],
-                                  ));
-                        }
-                      },
-                      child: Text("Save"))
-                ],
+                            added
+                                ? {
+                                    controller.ExcludeIdList.clear(),
+                                    controller.refreshProducts(),
+                                    Get.back()
+                                  }
+                                : Get.defaultDialog(
+                                    title: "Error",
+                                    content: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child:
+                                              Text("Error Adding the Product"),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Get.back();
+                                            },
+                                            child: Text("Close"))
+                                      ],
+                                    ));
+                          }
+                        },
+                        child: Text("Save"))
+                  ],
+                ),
               );
       }),
     );
