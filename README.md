@@ -6,6 +6,10 @@ A project.
 
 This project is an assignment project.
 
+![web](https://user-images.githubusercontent.com/56546673/200947925-9608ffa5-18e7-4a69-8066-01a2c53378fe.png)
+
+
+
 ![mobile](https://user-images.githubusercontent.com/56546673/200947682-ab7e5417-e937-4355-a307-bf6400108f67.png)![mobile2](https://user-images.githubusercontent.com/56546673/200947715-026daace-fe18-4dee-8932-1f96bf558751.png)
 
 ![monile3](https://user-images.githubusercontent.com/56546673/200947688-9058610f-9fa5-4c86-895d-2113944865d6.png)
