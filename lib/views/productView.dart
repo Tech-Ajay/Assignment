@@ -255,10 +255,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: [
-                                        // Text("Price : ",
-                                        //     style: TextStyle(
-                                        //         fontSize: 16,
-                                        //         fontWeight: FontWeight.bold)),
                                         Text(
                                           "Rs.${product.SalePrice.toString()}",
                                           style: TextStyle(
