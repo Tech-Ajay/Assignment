@@ -19,7 +19,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onInit() async {
+    controller.isLoading.value = true;
     await controller.getListOfProducts();
+    controller.isLoading.value = false;
     setState(() {});
   }
 
@@ -42,68 +44,78 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           backgroundColor: Colors.redAccent,
         ),
-        body: controller.productList.length > 0
-            ? Obx(() {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: controller.productList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(children: [
-                              Row(
-                                children: [
-                                  Text("Name : ",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(controller.productList[index].Name!,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text("Price : ",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(
-                                    "Rs.${controller.productList[index].MRP.toString()}",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                        decoration: TextDecoration.lineThrough),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      "Rs.${controller.productList[index].SalePrice.toString()}",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
+        body: controller.isLoading.value == true
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Center(child: CircularProgressIndicator()))
+            : Container(
+                child: controller.productList.length > 0
+                    ? Obx(() {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.productList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(children: [
+                                      Row(
+                                        children: [
+                                          Text("Name : ",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                          Text(
+                                              controller
+                                                  .productList[index].Name!,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
                                       ),
-                                    ),
+                                      Row(
+                                        children: [
+                                          Text("Price : ",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold)),
+                                          Text(
+                                            "Rs.${controller.productList[index].MRP.toString()}",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red,
+                                                decoration:
+                                                    TextDecoration.lineThrough),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Text(
+                                              "Rs.${controller.productList[index].SalePrice.toString()}",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ]),
                                   ),
-                                ],
-                              ),
-                            ]),
-                          ),
+                                );
+                              }),
                         );
-                      }),
-                );
-              })
-            : InkWell(
-                onTap: () {
-                  setState(() {});
-                },
-                child: Text("No Product")));
+                      })
+                    : InkWell(
+                        onTap: () {
+                          setState(() {});
+                        },
+                        child: Text("No Product"))));
   }
 }

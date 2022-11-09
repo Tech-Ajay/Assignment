@@ -60,7 +60,6 @@ query MyQuery {
 query MyQuery {
   product {
     Variants
-    Tags
     SKUid
     SalePrice
     Name
