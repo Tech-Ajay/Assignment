@@ -168,7 +168,8 @@ class _AddProductState extends State<AddProduct> {
 
                           added
                               ? {
-                                  await controller.getListOfProducts(),
+                                  controller.ExcludeIdList.clear(),
+                                  controller.refreshProducts(),
                                   Get.back()
                                 }
                               : Get.defaultDialog(

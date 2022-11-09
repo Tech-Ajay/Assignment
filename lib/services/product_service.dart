@@ -55,10 +55,42 @@ query MyQuery {
     }
   }
 
-  Future<List<ProductModel>> getListOfProducts() async {
+  Future<List<ProductModel>> getListOfProducts({
+    String? SKUid,
+    List<String>? Variant,
+    num? SalePrice,
+    String? Name,
+    num? InventoryQuantity,
+    String? Brand,
+    List<String>? ExcludeIds,
+    String? SortBy,
+  }) async {
+    String SortByFilter = '';
+    if (SortBy == "Name Asc") {
+      SortByFilter = 'order_by: {Name: asc},';
+    } else if (SortBy == "Name Dsc") {
+      SortByFilter = 'order_by: {Name: desc},';
+    } else if (SortBy == "Price Low to High") {
+      SortByFilter = 'order_by: {SalePrice: desc},';
+    } else if (SortBy == "Price High to Low") {
+      SortByFilter = 'order_by: {SalePrice: asc},';
+    }
+
+    String SKUidFilter = SKUid != null ? 'SKUid: {_eq: "$SKUid"}, ' : '';
+    String SalePriceFilter =
+        SalePrice != null ? 'SalePrice: {_lt: "$SalePrice"}, ' : '';
+    String VariantFilter = (Variant != null && Variant.length > 0)
+        ? 'Variants: {_in: ${jsonEncode(Variant)}}, '
+        : '';
+    String NameFilter = Name != null ? 'Name: {_eq: "$Name"}, ' : '';
+    String BrandFilter = Brand != null ? 'Brand: {_eq: "$Brand"}, ' : '';
+    String ExcludeIdsFilter = (ExcludeIds != null && ExcludeIds.length > 0)
+        ? 'SKUid: {_nin: ${jsonEncode(ExcludeIds)},} '
+        : '';
+
     String query = """
 query MyQuery {
-  product {
+  product ($SortByFilter where: {$SKUidFilter $VariantFilter $NameFilter $BrandFilter $ExcludeIdsFilter $SalePriceFilter}){
     Variants
     SKUid
     SalePrice
@@ -67,6 +99,7 @@ query MyQuery {
     InventoryQuantity
     Description
     Brand
+    Tags
   }
 }
 """;

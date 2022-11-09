@@ -35,11 +35,12 @@ class ProductModel {
       Description: map.containsKey('Description') ? map['Description'] : null,
       Brand: map.containsKey('Brand') ? map['Brand'] : null,
       Variants: map.containsKey('Variants') ? map['Variants'] : null,
-      Tags: map.containsKey('Tags') &&
-              map['Tags'] != null &&
-              map['Tags'].toString().trim() != 'null'
-          ? List<String>.from(json.decode(map['Tags']))
-          : null,
+      Tags: map.containsKey('Tags') ? jsonEncode(map['Tags']).split(',') : null,
+      // Tags: map.containsKey('Tags') &&
+      //         map['Tags'] != null &&
+      //         map['Tags'].toString().trim() != 'null'
+      //     ? List<String>.from(json.decode(map['Tags']))
+      //     : null,
       InventoryQuantity: map.containsKey('InventoryQuantity')
           ? map['InventoryQuantity']
           : null,

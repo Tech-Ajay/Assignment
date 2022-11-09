@@ -1,7 +1,6 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:supertails/model/product_model.dart';
 import 'package:supertails/services/product_service.dart';
 import 'package:uuid/uuid.dart';
@@ -16,13 +15,95 @@ class ProductController extends GetxController {
   TextEditingController VariantController = TextEditingController();
   TextEditingController InventoryQuantityController = TextEditingController();
 
+  RxDouble sliderValue = RxDouble(0);
+
   RxList<ProductModel> productList = RxList<ProductModel>();
   ProductService productService = ProductService();
 
   RxList<String> SelectedTagList = RxList<String>();
+  RxList<String> ExcludeIdList = RxList<String>();
+
+  RxList<String> variantFilterList =
+      RxList<String>(["XS", "S", "M", "L", "XL"]);
+  RxString variantSelectedFilter = RxString('');
+  RxString BrandSelectedFilter = RxString('');
+  RxString SortBySelectedFilter = RxString('');
+  RxList<String> SortByFilter = RxList<String>(
+      ['Name Asc', 'Name Dsc', "Price High to Low", "Price Low to High"]);
+  RxList<String> BrandFilter = RxList<String>();
+  RxList<String> filterList = RxList<String>();
+  RxList<String> NameList = RxList<String>();
+  RxString slectedName = RxString('');
+
+  late PagingController<int, ProductModel> pagingController;
+
+  void initializePagination() {
+    pagingController.addPageRequestListener((pageKey) async {
+      fetchProduct(pageKey: pageKey);
+    });
+  }
+
+  void fetchProduct({int pageSize = 10, required int pageKey}) async {
+    try {
+      List<ProductModel> products = await productService.getListOfProducts(
+          ExcludeIds: ExcludeIdList,
+          // Variant: variantSelectedFilter,
+          SalePrice: sliderValue.value == 0 ? null : sliderValue.value,
+          Name: slectedName.value == "" ? null : slectedName.value,
+          SortBy: SortBySelectedFilter.value == ""
+              ? null
+              : SortBySelectedFilter.value,
+          Brand: BrandSelectedFilter.value == ""
+              ? null
+              : BrandSelectedFilter.value);
+
+      List<ProductModel> newProducts = [];
+
+      if (variantSelectedFilter.value != '') {
+        for (var i = 0; i < products.length; i++) {
+          var variantList = products[i].Variants!.split(',');
+          int b = 0;
+          for (var element in variantList) {
+            if (element == variantSelectedFilter.value) {
+              b = b + 1;
+            }
+          }
+          b > 0 ? newProducts.add(products[i]) : products.remove(products[i]);
+        }
+      } else {
+        newProducts = products;
+      }
+
+      for (var product in newProducts) {
+        ExcludeIdList.add(product.SKUid!);
+      }
+
+      final isLastPage = newProducts.length < pageSize;
+      if (isLastPage) {
+        pagingController.appendLastPage(newProducts);
+      } else {
+        final nextPageKey = pageKey + newProducts.length;
+        pagingController.appendPage(newProducts, nextPageKey);
+      }
+    } catch (error) {
+      pagingController.error = error;
+    }
+  }
+
+  void refreshProducts() {
+    pagingController.refresh();
+  }
 
   Future<void> getListOfProducts() async {
     productList.value = await productService.getListOfProducts();
+    BrandFilter.clear();
+    if (productList.isNotEmpty) {
+      for (var element in productList) {
+        BrandFilter.add(element.Brand!);
+        NameList.add(element.Name!);
+        // variantFilterList.value = variantFilterList.toSet().toList();
+      }
+    }
   }
 
   bool validate() {
