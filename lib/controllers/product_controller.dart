@@ -11,6 +11,7 @@ class ProductController extends GetxController {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController MRPController = TextEditingController();
   TextEditingController SalePriceController = TextEditingController();
+  TextEditingController TypeController = TextEditingController();
   TextEditingController BrandController = TextEditingController();
   TextEditingController VariantController = TextEditingController();
   TextEditingController InventoryQuantityController = TextEditingController();
@@ -31,9 +32,12 @@ class ProductController extends GetxController {
   RxList<String> SortByFilter = RxList<String>(
       ['Name Asc', 'Name Dsc', "Price High to Low", "Price Low to High"]);
   RxList<String> BrandFilter = RxList<String>();
+  RxList<String> TypeFilter = RxList<String>();
+  RxList<String> SelectedTypeFilter = RxList<String>();
   RxList<String> filterList = RxList<String>();
   RxList<String> NameList = RxList<String>();
   RxString slectedName = RxString('');
+  RxString similarName = RxString('');
 
   late PagingController<int, ProductModel> pagingController;
 
@@ -47,6 +51,7 @@ class ProductController extends GetxController {
     try {
       List<ProductModel> products = await productService.getListOfProducts(
           ExcludeIds: ExcludeIdList,
+          Type: SelectedTypeFilter.isNotEmpty ? SelectedTypeFilter : null,
           // Variant: variantSelectedFilter,
           SalePrice: sliderValue.value == 0 ? null : sliderValue.value,
           Name: slectedName.value == "" ? null : slectedName.value,
@@ -97,11 +102,13 @@ class ProductController extends GetxController {
   Future<void> getListOfProducts() async {
     productList.value = await productService.getListOfProducts();
     BrandFilter.clear();
+    TypeFilter.clear();
     if (productList.isNotEmpty) {
       for (var element in productList) {
         BrandFilter.add(element.Brand!);
         NameList.add(element.Name!);
-        // variantFilterList.value = variantFilterList.toSet().toList();
+        TypeFilter.add(element.Type!);
+        TypeFilter.value = TypeFilter.toSet().toList();
       }
     }
   }
@@ -128,6 +135,7 @@ class ProductController extends GetxController {
         Description: descriptionController.text,
         Brand: BrandController.text,
         Tags: SelectedTagList,
+        Type: TypeController.text,
         Variants: VariantController.text,
         CreatedAt: DateTime.now(),
         MRP: double.parse(MRPController.text),

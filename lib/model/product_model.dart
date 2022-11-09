@@ -6,6 +6,7 @@ class ProductModel {
   final String? Description;
   final String? Brand;
   final String? Variants;
+  final String? Type;
   final List<String>? Tags;
   final DateTime? CreatedAt;
   final String? CreatedBy;
@@ -24,6 +25,7 @@ class ProductModel {
     required this.CreatedAt,
     required this.MRP,
     required this.SalePrice,
+    required this.Type,
     required this.InventoryQuantity,
   });
 
@@ -32,6 +34,7 @@ class ProductModel {
       CreatedBy: map.containsKey('CreatedBy') ? map['CreatedBy'] : null,
       SKUid: map.containsKey('SKUid') ? map['SKUid'] : null,
       Name: map.containsKey('Name') ? map['Name'] : null,
+      Type: map.containsKey('Type') ? map['Type'] : null,
       Description: map.containsKey('Description') ? map['Description'] : null,
       Brand: map.containsKey('Brand') ? map['Brand'] : null,
       Variants: map.containsKey('Variants') ? map['Variants'] : null,
@@ -58,6 +61,7 @@ class ProductModel {
     String? Name,
     String? Description,
     String? Brand,
+    String? Type,
     String? Variants,
     List<String>? Tags,
     DateTime? CreatedAt,
@@ -71,6 +75,7 @@ class ProductModel {
       Name: Name ?? this.Name,
       Description: Description ?? this.Description,
       Brand: Brand ?? this.Brand,
+      Type: Type ?? this.Type,
       Variants: Variants ?? this.Variants,
       Tags: Tags ?? this.Tags,
       CreatedAt: CreatedAt ?? this.CreatedAt,
@@ -97,6 +102,9 @@ class ProductModel {
     }
     if (Brand != null && Brand!.isNotEmpty) {
       map['Brand'] = Brand;
+    }
+    if (Type != null && Type!.isNotEmpty) {
+      map['Type'] = Type;
     }
     if (Variants != null && Variants!.isNotEmpty) {
       map['Variants'] = Variants;

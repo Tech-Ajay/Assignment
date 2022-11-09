@@ -26,6 +26,7 @@ query MyQuery {
     InventoryQuantity
     Description
     Brand
+    Type
   }
 }
   """;
@@ -63,6 +64,7 @@ query MyQuery {
     num? InventoryQuantity,
     String? Brand,
     List<String>? ExcludeIds,
+    List<String>? Type,
     String? SortBy,
   }) async {
     String SortByFilter = '';
@@ -76,6 +78,7 @@ query MyQuery {
       SortByFilter = 'order_by: {SalePrice: asc},';
     }
 
+    String TypeFilter = Type != null ? 'Type: {_in: $Type}, ' : '';
     String SKUidFilter = SKUid != null ? 'SKUid: {_eq: "$SKUid"}, ' : '';
     String SalePriceFilter =
         SalePrice != null ? 'SalePrice: {_lt: "$SalePrice"}, ' : '';
@@ -90,7 +93,7 @@ query MyQuery {
 
     String query = """
 query MyQuery {
-  product ($SortByFilter where: {$SKUidFilter $VariantFilter $NameFilter $BrandFilter $ExcludeIdsFilter $SalePriceFilter}){
+  product ($SortByFilter where: {$SKUidFilter $TypeFilter $VariantFilter $NameFilter $BrandFilter $ExcludeIdsFilter $SalePriceFilter}){
     Variants
     SKUid
     SalePrice
@@ -100,6 +103,7 @@ query MyQuery {
     Description
     Brand
     Tags
+    Type
   }
 }
 """;

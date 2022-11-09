@@ -104,29 +104,38 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 Expanded(
-                    child: TypeAheadField(
-                        textFieldConfiguration: TextFieldConfiguration(
-                            autofocus: false,
-                            decoration:
-                                InputDecoration(border: OutlineInputBorder()),
-                            controller: _typeAheadController),
-                        suggestionsCallback: (pattern) async {
-                          Completer<List<String>> completer = new Completer();
-                          var sugg = controller.NameList.where(
-                              (p0) => p0.contains(pattern)).toList();
-                          completer.complete(sugg);
-                          return completer.future;
-                        },
-                        itemBuilder: (context, suggestion) {
-                          return ListTile(title: Text(suggestion));
-                        },
-                        onSuggestionSelected: (suggestion) {
-                          _typeAheadController.text = suggestion;
-                          controller.slectedName.value = suggestion;
-                          controller.filterList.add(suggestion);
-                          controller.ExcludeIdList.clear();
-                          controller.refreshProducts();
-                        }))
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TypeAheadField(
+                      textFieldConfiguration: TextFieldConfiguration(
+                          autofocus: false,
+                          decoration: InputDecoration(
+                              hintText: "Search", border: OutlineInputBorder()),
+                          controller: _typeAheadController),
+                      suggestionsCallback: (pattern) async {
+                        Completer<List<String>> completer = new Completer();
+                        var sugg = controller.NameList.where(
+                            (p0) => p0.contains(pattern)).toList();
+
+                        if (sugg.isEmpty) {
+                          controller.similarName.value = pattern;
+                        } else {
+                          controller.similarName.value = '';
+                        }
+                        completer.complete(sugg);
+                        return completer.future;
+                      },
+                      itemBuilder: (context, suggestion) {
+                        return ListTile(title: Text(suggestion));
+                      },
+                      onSuggestionSelected: (suggestion) {
+                        _typeAheadController.text = suggestion;
+                        controller.slectedName.value = suggestion;
+                        controller.filterList.add(suggestion);
+                        controller.ExcludeIdList.clear();
+                        controller.refreshProducts();
+                      }),
+                ))
               ],
             ),
             Obx(() {
@@ -175,6 +184,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                             controller.filterList[index]) {
                                           controller
                                               .SortBySelectedFilter.value = "";
+                                        } else if (controller.SelectedTypeFilter
+                                            .contains(
+                                                controller.filterList[index])) {
+                                          controller.SelectedTypeFilter.remove(
+                                              controller.filterList[index]);
                                         } else
                                           controller
                                               .variantSelectedFilter.value = '';
@@ -212,47 +226,58 @@ class _MyHomePageState extends State<MyHomePage> {
                             emptyBuilder: (context) => _buildEmptyData(),
                             itemBuilder: (context, product, index) {
                               return Card(
+                                color: Colors.white,
+                                elevation: 8,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(children: [
                                     Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Text("Name : ",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(product.Name!,
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
+                                        // Text("Name : ",
+                                        //     style: TextStyle(
+                                        //         fontSize: 20,
+                                        //         fontWeight: FontWeight.bold)),
+                                        Expanded(
+                                          child: Text(product.Name!,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
                                       ],
                                     ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
-                                        Text("Price : ",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold)),
+                                        // Text("Price : ",
+                                        //     style: TextStyle(
+                                        //         fontSize: 16,
+                                        //         fontWeight: FontWeight.bold)),
+                                        Text(
+                                          "Rs.${product.SalePrice.toString()}",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 2,
+                                        ),
                                         Text(
                                           "Rs.${product.MRP.toString()}",
                                           style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.red,
                                               decoration:
                                                   TextDecoration.lineThrough),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Text(
-                                            "Rs.${product.SalePrice.toString()}",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green,
-                                            ),
-                                          ),
                                         ),
                                       ],
                                     ),
@@ -264,6 +289,38 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 fontWeight: FontWeight.bold)),
                                         Text(
                                           "${product.Variants}",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            // color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text("Brand : ",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          "${product.Brand}",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            // color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text("Type : ",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold)),
+                                        Text(
+                                          "${product.Type}",
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -360,6 +417,63 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               QText(
+                text: 'Type',
+                fontSize: 18,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.w500,
+              ),
+              Wrap(
+                children: List.generate(
+                  controller.TypeFilter.length,
+                  (index) => Obx(() {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 26.0, vertical: 16.0),
+                      child: InkWell(
+                        onTap: () {
+                          if (controller.SelectedTypeFilter.contains(
+                              controller.TypeFilter[index])) {
+                            controller.SelectedTypeFilter.remove(
+                                controller.TypeFilter[index]);
+                            controller.filterList
+                                .remove(controller.TypeFilter[index]);
+                          } else {
+                            controller.SelectedTypeFilter.add(
+                                controller.TypeFilter[index]);
+                            controller.filterList
+                                .add(controller.TypeFilter[index]);
+                          }
+                          controller.ExcludeIdList.clear();
+                          controller.refreshProducts();
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            QContainer(
+                              height: 12,
+                              width: 12,
+                              border: Border.all(),
+                              shape: BoxShape.circle,
+                              color: controller.SelectedTypeFilter.contains(
+                                      controller.TypeFilter[index])
+                                  ? Colors.redAccent
+                                  : Colors.white,
+                            ),
+                            SizedBox(width: 5),
+                            QText(
+                              text: controller.TypeFilter[index],
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                            SizedBox(width: 5),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+              QText(
                 text: 'Price',
                 fontSize: 18,
                 color: Colors.redAccent,
@@ -404,7 +518,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (controller.sliderValue.value.round() > 0)
                       QText(
                         text:
-                            "Price Less Than ${controller.sliderValue.value.round()}",
+                            "Price Less Than Rs.${controller.sliderValue.value.round()}",
                         color: Colors.redAccent,
                         isHeader: true,
                         fontSize: 14,
