@@ -73,9 +73,9 @@ query MyQuery {
     } else if (SortBy == "Name Dsc") {
       SortByFilter = 'order_by: {Name: desc},';
     } else if (SortBy == "Price Low to High") {
-      SortByFilter = 'order_by: {SalePrice: desc},';
-    } else if (SortBy == "Price High to Low") {
       SortByFilter = 'order_by: {SalePrice: asc},';
+    } else if (SortBy == "Price High to Low") {
+      SortByFilter = 'order_by: {SalePrice: desc},';
     }
 
     String TypeFilter = Type != null ? 'Type: {_in: $Type}, ' : '';
@@ -131,7 +131,7 @@ query MyQuery {
 
     String query = """
 mutation MyMutation {
-  insert_product(objects: {Brand: "${productModel.Brand}", Description: "${productModel.Description}", Variants: "${productModel.Variants}", Tags: ${tag}, SalePrice: ${productModel.SalePrice}, SKUid: "${productModel.SKUid}", Name: "${productModel.Name}", MRP: ${productModel.MRP}, InventoryQuantity: ${productModel.InventoryQuantity}}) {
+  insert_product(objects: {Brand: "${productModel.Brand}", Description: "${productModel.Description}", Variants: "${productModel.Variants}", Tags: ${tag}, SalePrice: ${productModel.SalePrice}, SKUid: "${productModel.SKUid}", Name: "${productModel.Name}", Type: "${productModel.Type}" , MRP: ${productModel.MRP}, InventoryQuantity: ${productModel.InventoryQuantity}}) {
     affected_rows
   }
 }

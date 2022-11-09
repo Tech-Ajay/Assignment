@@ -16,6 +16,21 @@ class ProductController extends GetxController {
   TextEditingController VariantController = TextEditingController();
   TextEditingController InventoryQuantityController = TextEditingController();
 
+  void clearData() {
+    nameController.clear();
+    descriptionController.clear();
+    MRPController.clear();
+    SalePriceController.clear();
+    TypeController.clear();
+    BrandController.clear();
+    VariantController.clear();
+    InventoryQuantityController.clear();
+    SelectedTagList.clear();
+    BrandSelectedFilter.value = '';
+    SortBySelectedFilter.value = '';
+    SelectedTypeFilter.clear();
+  }
+
   RxDouble sliderValue = RxDouble(0);
 
   RxList<ProductModel> productList = RxList<ProductModel>();
@@ -109,6 +124,7 @@ class ProductController extends GetxController {
         NameList.add(element.Name!);
         TypeFilter.add(element.Type!);
         TypeFilter.value = TypeFilter.toSet().toList();
+        BrandFilter.value = BrandFilter.toSet().toList();
       }
     }
   }

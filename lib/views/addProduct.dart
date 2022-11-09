@@ -123,6 +123,15 @@ class _AddProductState extends State<AddProduct> {
                     Container(
                         margin: EdgeInsets.all(20),
                         child: TextField(
+                          controller: controller.TypeController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Type',
+                          ),
+                        )),
+                    Container(
+                        margin: EdgeInsets.all(20),
+                        child: TextField(
                           controller: controller.VariantController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -171,7 +180,8 @@ class _AddProductState extends State<AddProduct> {
                                 ? {
                                     controller.ExcludeIdList.clear(),
                                     controller.refreshProducts(),
-                                    Get.back()
+                                    Get.back(),
+                                    controller.clearData()
                                   }
                                 : Get.defaultDialog(
                                     title: "Error",

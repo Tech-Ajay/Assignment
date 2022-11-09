@@ -41,305 +41,316 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(),
-              Text("View Products Page"),
-              InkWell(
-                  onTap: () {
-                    Get.to(AddProduct());
-                  },
-                  child: Icon(Icons.add)),
-              SizedBox()
-            ],
-          ),
-          backgroundColor: Colors.redAccent,
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    QDialog.show(
-                      context: context,
-                      enableScroll: true,
-                      title: '',
-                      content: _buildFilter(),
-                      enableCancel: false,
-                    );
-                  },
-                  child: QContainer(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: Colors.black,
-                    ),
-                    padding: EdgeInsets.all(4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.filter_list_rounded,
-                          color: Colors.black,
-                        ),
-                        SizedBox(width: 5),
-                        QText(
-                          text: 'Filter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          isHeader: true,
-                          color: Colors.black,
-                        ),
-                        SizedBox(width: 5),
-                        Icon(
-                          Icons.keyboard_arrow_down_outlined,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
+            SizedBox(),
+            Text("View Products Page"),
+            SizedBox(),
+            InkWell(
+                onTap: () {
+                  setState(() {});
+                },
+                child: Icon(Icons.refresh)),
+          ],
+        ),
+        backgroundColor: Colors.redAccent,
+      ),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  QDialog.show(
+                    context: context,
+                    enableScroll: true,
+                    title: '',
+                    content: _buildFilter(),
+                    enableCancel: false,
+                  );
+                },
+                child: QContainer(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                  padding: EdgeInsets.all(4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.filter_list_rounded,
+                        color: Colors.black,
+                      ),
+                      SizedBox(width: 5),
+                      QText(
+                        text: 'Filter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        isHeader: true,
+                        color: Colors.black,
+                      ),
+                      SizedBox(width: 5),
+                      Icon(
+                        Icons.keyboard_arrow_down_outlined,
+                        color: Colors.black,
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TypeAheadField(
-                      textFieldConfiguration: TextFieldConfiguration(
-                          autofocus: false,
-                          decoration: InputDecoration(
-                              hintText: "Search", border: OutlineInputBorder()),
-                          controller: _typeAheadController),
-                      suggestionsCallback: (pattern) async {
-                        Completer<List<String>> completer = new Completer();
-                        var sugg = controller.NameList.where(
-                            (p0) => p0.contains(pattern)).toList();
+              ),
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TypeAheadField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                        autofocus: false,
+                        decoration: InputDecoration(
+                            hintText: "Search", border: OutlineInputBorder()),
+                        controller: _typeAheadController),
+                    suggestionsCallback: (pattern) async {
+                      Completer<List<String>> completer = new Completer();
+                      var sugg = controller.NameList.where(
+                          (p0) => p0.contains(pattern)).toList();
 
-                        if (sugg.isEmpty) {
-                          controller.similarName.value = pattern;
-                        } else {
-                          controller.similarName.value = '';
-                        }
-                        completer.complete(sugg);
-                        return completer.future;
-                      },
-                      itemBuilder: (context, suggestion) {
-                        return ListTile(title: Text(suggestion));
-                      },
-                      onSuggestionSelected: (suggestion) {
-                        _typeAheadController.text = suggestion;
-                        controller.slectedName.value = suggestion;
-                        controller.filterList.add(suggestion);
-                        controller.ExcludeIdList.clear();
-                        controller.refreshProducts();
-                      }),
-                ))
-              ],
-            ),
-            Obx(() {
-              return Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Row(
-                  children: [
-                    ...List.generate(
-                        controller.filterList.length,
-                        (index) => QContainer(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 5),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.black,
-                              ),
-                              padding: EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(width: 5),
-                                  QText(
-                                    text: controller.filterList[index],
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    isHeader: true,
-                                    color: Colors.black,
-                                  ),
-                                  SizedBox(width: 2),
-                                  InkWell(
-                                    onTap: () {
-                                      if (controller.filterList[index]
-                                          .contains("Price Less Than")) {
-                                        controller.sliderValue.value = 0;
-                                      } else {
-                                        // controller.variantSelectedFilter.remove(
-                                        //     controller.filterList[index]);
-                                        if (controller
-                                                .BrandSelectedFilter.value ==
-                                            controller.filterList[index]) {
-                                          controller.BrandSelectedFilter.value =
-                                              "";
-                                        } else if (controller
-                                                .SortBySelectedFilter.value ==
-                                            controller.filterList[index]) {
-                                          controller
-                                              .SortBySelectedFilter.value = "";
-                                        } else if (controller.SelectedTypeFilter
-                                            .contains(
-                                                controller.filterList[index])) {
-                                          controller.SelectedTypeFilter.remove(
-                                              controller.filterList[index]);
-                                        } else
-                                          controller
-                                              .variantSelectedFilter.value = '';
-                                      }
-                                      controller.filterList.removeAt(index);
-                                      controller.ExcludeIdList.clear();
-                                      controller.refreshProducts();
-                                    },
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 14,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ))
-                  ],
-                ),
-              );
-            }),
-            Container(
-                child: controller.isLoading.value == true
-                    ? Container(
-                        height: MediaQuery.of(context).size.height - 200,
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(child: CircularProgressIndicator()))
-                    : Container(
-                        height: MediaQuery.of(context).size.height - 200,
-                        width: MediaQuery.of(context).size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: QListBuilder<ProductModel>(
-                            pageingController: controller.pagingController,
-                            emptyBuilder: (context) => _buildEmptyData(),
-                            itemBuilder: (context, product, index) {
-                              return Card(
-                                color: Colors.white,
-                                elevation: 8,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        // Text("Name : ",
-                                        //     style: TextStyle(
-                                        //         fontSize: 20,
-                                        //         fontWeight: FontWeight.bold)),
-                                        Expanded(
-                                          child: Text(product.Name!,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "Rs.${product.SalePrice.toString()}",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Text(
-                                          "Rs.${product.MRP.toString()}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red,
-                                              decoration:
-                                                  TextDecoration.lineThrough),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text("Variants : ",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                          "${product.Variants}",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            // color: Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text("Brand : ",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                          "${product.Brand}",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            // color: Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text("Type : ",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold)),
-                                        Text(
-                                          "${product.Type}",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            // color: Colors.red,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ]),
+                      if (sugg.isEmpty) {
+                        controller.similarName.value = pattern;
+                      } else {
+                        controller.similarName.value = '';
+                      }
+                      completer.complete(sugg);
+                      return completer.future;
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(title: Text(suggestion));
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      _typeAheadController.text = suggestion;
+                      controller.slectedName.value = suggestion;
+                      controller.filterList.add(suggestion);
+                      controller.ExcludeIdList.clear();
+                      controller.refreshProducts();
+                    }),
+              ))
+            ],
+          ),
+          Obx(() {
+            return Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Row(
+                children: [
+                  ...List.generate(
+                      controller.filterList.length,
+                      (index) => QContainer(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 5),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                            padding: EdgeInsets.all(4),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(width: 5),
+                                QText(
+                                  text: controller.filterList[index],
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  isHeader: true,
+                                  color: Colors.black,
                                 ),
-                              );
-                            },
-                          ),
-                          // ListView.builder(
-                          //     physics: NeverScrollableScrollPhysics(),
-                          //     shrinkWrap: true,
-                          //     itemCount: controller.productList.length,
-                          //     itemBuilder: (BuildContext context, int index) {
-                          //       return
-                          //     }),
-                        ))),
-          ],
-        ));
+                                SizedBox(width: 2),
+                                InkWell(
+                                  onTap: () {
+                                    if (controller.filterList[index]
+                                        .contains("Price Less Than")) {
+                                      controller.sliderValue.value = 0;
+                                    } else {
+                                      // controller.variantSelectedFilter.remove(
+                                      //     controller.filterList[index]);
+                                      if (controller
+                                              .BrandSelectedFilter.value ==
+                                          controller.filterList[index]) {
+                                        controller.BrandSelectedFilter.value =
+                                            "";
+                                      } else if (controller
+                                              .SortBySelectedFilter.value ==
+                                          controller.filterList[index]) {
+                                        controller.SortBySelectedFilter.value =
+                                            "";
+                                      } else if (controller.SelectedTypeFilter
+                                          .contains(
+                                              controller.filterList[index])) {
+                                        controller.SelectedTypeFilter.remove(
+                                            controller.filterList[index]);
+                                      } else if (controller.slectedName.value ==
+                                          controller.filterList[index]) {
+                                        controller.slectedName.value = "";
+                                      } else
+                                        controller.variantSelectedFilter.value =
+                                            '';
+                                    }
+                                    _typeAheadController.clear();
+                                    controller.filterList.removeAt(index);
+                                    controller.ExcludeIdList.clear();
+                                    controller.refreshProducts();
+                                  },
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 14,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ))
+                ],
+              ),
+            );
+          }),
+          Container(
+              child: controller.isLoading.value == true
+                  ? Container(
+                      height: MediaQuery.of(context).size.height - 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(child: CircularProgressIndicator()))
+                  : Container(
+                      height: MediaQuery.of(context).size.height - 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: QListBuilder<ProductModel>(
+                          pageingController: controller.pagingController,
+                          emptyBuilder: (context) => _buildEmptyData(),
+                          itemBuilder: (context, product, index) {
+                            return Card(
+                              color: Colors.white,
+                              elevation: 8,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Text("Name : ",
+                                      //     style: TextStyle(
+                                      //         fontSize: 20,
+                                      //         fontWeight: FontWeight.bold)),
+                                      Expanded(
+                                        child: Text(product.Name!,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "Rs.${product.SalePrice.toString()}",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Text(
+                                        "Rs.${product.MRP.toString()}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red,
+                                            decoration:
+                                                TextDecoration.lineThrough),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("Variants : ",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        "${product.Variants}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          // color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("Brand : ",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        "${product.Brand}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          // color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text("Type : ",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        "${product.Type}",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          // color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                              ),
+                            );
+                          },
+                        ),
+                        // ListView.builder(
+                        //     physics: NeverScrollableScrollPhysics(),
+                        //     shrinkWrap: true,
+                        //     itemCount: controller.productList.length,
+                        //     itemBuilder: (BuildContext context, int index) {
+                        //       return
+                        //     }),
+                      ))),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        // isExtended: true,
+        child: Icon(Icons.add),
+        backgroundColor: Colors.redAccent,
+        onPressed: () {
+          Get.to(() => AddProduct());
+        },
+      ),
+    );
   }
 
   Widget _buildFilter() {
@@ -614,7 +625,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildEmptyData() {
     return Center(
-      child: Text("No Batches available",
+      child: Text("No Products available",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
     );
   }
